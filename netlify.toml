@@ -1,0 +1,13 @@
+[build]
+  base = "techfest-frontend"
+  command = "npm run build"
+  publish = "techfest-frontend/dist"
+
+[build.environment]
+  VITE_API_URL = "https://techfest-backend-yjz8.onrender.com"
+  REACT_APP_API_URL = "https://techfest-backend-yjz8.onrender.com"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
