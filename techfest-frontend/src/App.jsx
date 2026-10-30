@@ -22,7 +22,7 @@ function App() {
   const [date, setDate] = useState("");
   const [editingId, setEditingId] = useState(null);
 
-  // Parse Role from JWT
+  // Extract Role from JWT Token
   const getRoleFromToken = (jwtToken) => {
     try {
       const payload = JSON.parse(atob(jwtToken.split(".")[1]));
@@ -32,7 +32,7 @@ function App() {
     }
   };
 
-  // Load All Events
+  // Fetch Events
   const getEvents = () => {
     axios
       .get(`${API_BASE_URL}/events`)
@@ -51,7 +51,7 @@ function App() {
     }
   }, [token]);
 
-  // Auth Operations
+  // Auth Functions
   const signup = () => {
     axios
       .post(`${API_BASE_URL}/auth/signup`, { name, email, password })
@@ -92,7 +92,7 @@ function App() {
     setPage("login");
   };
 
-  // User Registration for Event
+  // Event Registration
   const registerEvent = (eventId) => {
     if (!token) {
       alert("Please login to register for events.");
@@ -103,7 +103,7 @@ function App() {
     axios
       .post(
         `${API_BASE_URL}/registrations`,
-        { eventId },
+        { eventId: eventId },
         { headers: { Authorization: `Bearer ${token}` } }
       )
       .then((response) => {
@@ -129,7 +129,7 @@ function App() {
       });
   };
 
-  // Admin Operations
+  // Admin Dashboard Actions
   const clearForm = () => {
     setEventName("");
     setCategory("");
@@ -140,21 +140,21 @@ function App() {
   };
 
   const addEvent = () => {
+    const payload = {
+      name: eventName,
+      title: eventName,
+      category,
+      fee: Number(fee),
+      price: Number(fee),
+      seats: Number(seats),
+      availableSeats: Number(seats),
+      date,
+    };
+
     axios
-      .post(
-        `${API_BASE_URL}/events`,
-        {
-          title: eventName,
-          name: eventName,
-          category,
-          price: Number(fee),
-          fee: Number(fee),
-          seats: Number(seats),
-          availableSeats: Number(seats),
-          date,
-        },
-        { headers: { Authorization: `Bearer ${token}` } }
-      )
+      .post(`${API_BASE_URL}/events`, payload, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
       .then(() => {
         alert("Event added successfully");
         clearForm();
@@ -175,21 +175,21 @@ function App() {
   };
 
   const updateEvent = () => {
+    const payload = {
+      name: eventName,
+      title: eventName,
+      category,
+      fee: Number(fee),
+      price: Number(fee),
+      seats: Number(seats),
+      availableSeats: Number(seats),
+      date,
+    };
+
     axios
-      .put(
-        `${API_BASE_URL}/events/${editingId}`,
-        {
-          title: eventName,
-          name: eventName,
-          category,
-          price: Number(fee),
-          fee: Number(fee),
-          seats: Number(seats),
-          availableSeats: Number(seats),
-          date,
-        },
-        { headers: { Authorization: `Bearer ${token}` } }
-      )
+      .put(`${API_BASE_URL}/events/${editingId}`, payload, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
       .then(() => {
         alert("Event updated successfully");
         clearForm();
@@ -216,7 +216,7 @@ function App() {
       });
   };
 
-  // ==================== VIEWS ====================
+  // ==================== PAGE RENDERERS ====================
 
   // 1. LOGIN PAGE
   if (!token && page === "login") {
@@ -264,7 +264,9 @@ function App() {
           <div className="auth-logo">TECHFEST</div>
           <p className="auth-tagline">Join the experience.</p>
           <h2>Create Account</h2>
-          <p className="auth-description">Register to participate in TechFest events.</p>
+          <p className="auth-description">
+            Register to participate in TechFest events.
+          </p>
           <input
             className="auth-input"
             type="text"
@@ -303,6 +305,8 @@ function App() {
 
   // 3. MY REGISTRATIONS PAGE
   if (page === "registrations") {
+    const validRegistrations = registrations.filter((reg) => reg && reg.event);
+
     return (
       <div className="app-container">
         <nav className="navbar">
@@ -312,7 +316,9 @@ function App() {
           </div>
           <div className="nav-buttons">
             <button onClick={() => setPage("events")}>Events</button>
-            <button className="logout-button" onClick={logout}>Logout</button>
+            <button className="logout-button" onClick={logout}>
+              Logout
+            </button>
           </div>
         </nav>
         <main className="main-content">
@@ -321,7 +327,8 @@ function App() {
           </button>
           <p className="section-label">YOUR ACTIVITY</p>
           <h1 className="page-title">My Registrations</h1>
-          {registrations.length === 0 ? (
+
+          {validRegistrations.length === 0 ? (
             <div className="empty-state">
               <div className="empty-icon"></div>
               <h2>No registrations yet</h2>
@@ -330,21 +337,27 @@ function App() {
             </div>
           ) : (
             <div className="registration-list">
-              {registrations.map((registration) => (
-                <div className="registration-card" key={registration._id}>
-                  <div>
-                    <span className="event-category">
-                      {registration.event?.category}
-                    </span>
-                    <h3>{registration.event?.title || registration.event?.name}</h3>
-                    <p>
-                      {new Date(registration.event?.date).toLocaleDateString()}
-                    </p>
-                    <p>₹ {registration.event?.price ?? registration.event?.fee ?? 0}</p>
+              {validRegistrations.map((registration) => {
+                const ev = registration.event;
+                return (
+                  <div className="registration-card" key={registration._id}>
+                    <div>
+                      <span className="event-category">
+                        {ev.category || "GENERAL"}
+                      </span>
+                      <h3>{ev.title || ev.name || "Event"}</h3>
+                      <p>
+                        🗓️{" "}
+                        {ev.date
+                          ? new Date(ev.date).toLocaleDateString()
+                          : "Date TBD"}
+                      </p>
+                      <p>₹ {ev.price ?? ev.fee ?? 0}</p>
+                    </div>
+                    <div className="registered-badge">✓ Registered</div>
                   </div>
-                  <div className="registered-badge">✓ Registered</div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </main>
@@ -363,7 +376,9 @@ function App() {
           </div>
           <div className="nav-buttons">
             <button onClick={() => setPage("events")}>Events</button>
-            <button className="logout-button" onClick={logout}>Logout</button>
+            <button className="logout-button" onClick={logout}>
+              Logout
+            </button>
           </div>
         </nav>
         <main className="admin-container">
@@ -381,7 +396,9 @@ function App() {
           <div className="admin-form">
             <h2>{editingId ? "Edit Event" : "Add New Event"}</h2>
             <p className="form-description">
-              {editingId ? "Update the event details below." : "Create a new event for TechFest."}
+              {editingId
+                ? "Update the event details below."
+                : "Create a new event for TechFest."}
             </p>
             <label>Event Name</label>
             <input
@@ -458,16 +475,28 @@ function App() {
                 <div className="admin-event" key={event._id}>
                   <div className="event-category">{event.category}</div>
                   <h3>{event.title || event.name}</h3>
-                  <p>{new Date(event.date).toLocaleDateString()}</p>
+                  <p>
+                    {event.date
+                      ? new Date(event.date).toLocaleDateString()
+                      : "N/A"}
+                  </p>
                   <div className="admin-event-details">
                     <span>₹ {event.price ?? event.fee ?? 0}</span>
-                    <span>{event.availableSeats ?? event.seats ?? 0} seats</span>
+                    <span>
+                      {event.availableSeats ?? event.seats ?? 0} seats
+                    </span>
                   </div>
                   <div className="admin-actions">
-                    <button className="edit-button" onClick={() => editEvent(event)}>
+                    <button
+                      className="edit-button"
+                      onClick={() => editEvent(event)}
+                    >
                       Edit
                     </button>
-                    <button className="delete-button" onClick={() => deleteEvent(event._id)}>
+                    <button
+                      className="delete-button"
+                      onClick={() => deleteEvent(event._id)}
+                    >
                       Delete
                     </button>
                   </div>
@@ -480,7 +509,7 @@ function App() {
     );
   }
 
-  // 5. MAIN EVENTS PAGE (DEFAULT LANDING VIEW)
+  // 5. EVENTS LANDING PAGE (DEFAULT)
   return (
     <div className="app-container">
       <nav className="navbar">
@@ -497,9 +526,16 @@ function App() {
             <button onClick={() => setPage("admin")}>Admin Dashboard</button>
           )}
           {token ? (
-            <button className="logout-button" onClick={logout}>Logout</button>
+            <button className="logout-button" onClick={logout}>
+              Logout
+            </button>
           ) : (
-            <button className="primary-button" onClick={() => setPage("login")}>Login</button>
+            <button
+              className="primary-button"
+              onClick={() => setPage("login")}
+            >
+              Login
+            </button>
           )}
         </div>
       </nav>
@@ -514,11 +550,15 @@ function App() {
               <br />
               Innovate.
             </h1>
-            <p>Explore exciting technical events, workshops and opportunities.</p>
+            <p>
+              Explore exciting technical events, workshops and opportunities.
+            </p>
             <button
               className="hero-button"
               onClick={() =>
-                document.getElementById("events-section")?.scrollIntoView({ behavior: "smooth" })
+                document
+                  .getElementById("events-section")
+                  ?.scrollIntoView({ behavior: "smooth" })
               }
             >
               Explore Events ↓
@@ -539,7 +579,10 @@ function App() {
                 <div className="event-category">{event.category}</div>
                 <h3>{event.title || event.name}</h3>
                 <p className="event-info">
-                  🗓️ {new Date(event.date).toLocaleDateString()}
+                  🗓️{" "}
+                  {event.date
+                    ? new Date(event.date).toLocaleDateString()
+                    : "Date TBD"}
                 </p>
                 <p className="event-info">
                   🎟️ {event.availableSeats ?? event.seats ?? 0} seats available
