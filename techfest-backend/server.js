@@ -46,8 +46,11 @@ const allowedOrigins = [
 app.use(
   cors({
     origin: (origin, callback) => {
-      // Allow requests with no origin (like mobile apps or curl) or if origin is whitelisted
-      if (!origin || allowedOrigins.includes(origin)) {
+      // Allow requests with no origin (e.g., Postman, server-to-server)
+      if (!origin) return callback(null, true);
+
+      // Allow listed origins OR any Vercel deployment ending with .vercel.app
+      if (allowedOrigins.includes(origin) || origin.endsWith(".vercel.app")) {
         callback(null, true);
       } else {
         callback(new Error("CORS policy violation: Access denied"));
