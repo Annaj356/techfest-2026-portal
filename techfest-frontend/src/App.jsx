@@ -50,7 +50,7 @@ function App() {
 
   const getEvents = () => {
     axios
-      .get("http://https://techfest-backend-yjz8.onrender.com/api/events")
+      .get("https://techfest-backend-yjz8.onrender.com/api/events")
       .then((response) => {
         setEvents(response.data);
       })
@@ -73,7 +73,7 @@ function App() {
 
   const signup = () => {
     axios
-      .post("http://https://techfest-backend-yjz8.onrender.com/api/auth/signup", {
+      .post("https://techfest-backend-yjz8.onrender.com/api/auth/signup", {
         name,
         email,
         password
@@ -101,7 +101,7 @@ function App() {
 
   const login = () => {
     axios
-      .post("http://https://techfest-backend-yjz8.onrender.com/api/auth/login", {
+      .post("https://techfest-backend-yjz8.onrender.com/api/auth/login", {
         email,
         password
       })
@@ -147,7 +147,7 @@ function App() {
   const registerEvent = (eventId) => {
     axios
       .post(
-        "http://https://techfest-backend-yjz8.onrender.com/api/registrations",
+        "https://techfest-backend-yjz8.onrender.com/api/registrations",
         { eventId: eventId },
         {
           headers: {
@@ -174,7 +174,7 @@ function App() {
   const getMyRegistrations = () => {
     axios
       .get(
-        "http://https://techfest-backend-yjz8.onrender.com/api/registrations/my",
+        "https://techfest-backend-yjz8.onrender.com/api/registrations/my",
         {
           headers: {
             Authorization: `Bearer ${token}`
@@ -213,7 +213,7 @@ function App() {
   const addEvent = () => {
     axios
       .post(
-        "http://https://techfest-backend-yjz8.onrender.com/api/events",
+        "https://techfest-backend-yjz8.onrender.com/api/events",
         {
           name: eventName,
           category: category,
@@ -262,7 +262,7 @@ function App() {
   const updateEvent = () => {
     axios
       .put(
-        `http://https://techfest-backend-yjz8.onrender.com/api/events/${editingId}`,
+        `https://techfest-backend-yjz8.onrender.com/api/events/${editingId}`,
         {
           name: eventName,
           category: category,
@@ -305,7 +305,7 @@ function App() {
 
     axios
       .delete(
-        `http://https://techfest-backend-yjz8.onrender.com/api/events/${eventId}`,
+        `https://techfest-backend-yjz8.onrender.com/api/events/${eventId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`
