@@ -50,7 +50,7 @@ function App() {
 
   const getEvents = () => {
     axios
-      .get("http://localhost:5000/api/events")
+      .get("http://https://techfest-backend-yjz8.onrender.com/api/events")
       .then((response) => {
         setEvents(response.data);
       })
@@ -73,7 +73,7 @@ function App() {
 
   const signup = () => {
     axios
-      .post("http://localhost:5000/api/auth/signup", {
+      .post("http://https://techfest-backend-yjz8.onrender.com/api/auth/signup", {
         name,
         email,
         password
@@ -101,7 +101,7 @@ function App() {
 
   const login = () => {
     axios
-      .post("http://localhost:5000/api/auth/login", {
+      .post("http://https://techfest-backend-yjz8.onrender.com/api/auth/login", {
         email,
         password
       })
@@ -147,7 +147,7 @@ function App() {
   const registerEvent = (eventId) => {
     axios
       .post(
-        "http://localhost:5000/api/registrations",
+        "http://https://techfest-backend-yjz8.onrender.com/api/registrations",
         { eventId: eventId },
         {
           headers: {
@@ -174,7 +174,7 @@ function App() {
   const getMyRegistrations = () => {
     axios
       .get(
-        "http://localhost:5000/api/registrations/my",
+        "http://https://techfest-backend-yjz8.onrender.com/api/registrations/my",
         {
           headers: {
             Authorization: `Bearer ${token}`
@@ -213,7 +213,7 @@ function App() {
   const addEvent = () => {
     axios
       .post(
-        "http://localhost:5000/api/events",
+        "http://https://techfest-backend-yjz8.onrender.com/api/events",
         {
           name: eventName,
           category: category,
@@ -262,7 +262,7 @@ function App() {
   const updateEvent = () => {
     axios
       .put(
-        `http://localhost:5000/api/events/${editingId}`,
+        `http://https://techfest-backend-yjz8.onrender.com/api/events/${editingId}`,
         {
           name: eventName,
           category: category,
@@ -305,7 +305,7 @@ function App() {
 
     axios
       .delete(
-        `http://localhost:5000/api/events/${eventId}`,
+        `http://https://techfest-backend-yjz8.onrender.com/api/events/${eventId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`
